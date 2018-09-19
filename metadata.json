@@ -1,0 +1,22 @@
+{
+  "name": "jmorot-galeracluster",
+  "version": "0.1.0",
+  "author": "jmorot",
+  "summary": "Module to help building a galera cluster",
+  "license": "GPLv3",
+  "source": "",
+  "project_page": null,
+  "issues_url": null,
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "puppetlabs-apt",
+      "version_requirement": ">= 1.0.0"
+    }
+  ],
+  "data_provider": null
+}
+
