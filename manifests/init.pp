@@ -40,10 +40,24 @@
 # Copyright
 # ---------
 #
-# Copyright 2018 Your name here, unless otherwise noted.
+# Copyright 2018 Julien Morot
 #
-class galeracluster {
+class galeracluster (
+	$root_password = 'G@leraP4ssw0rd',
+	$cluster_name   = '',
+    $cluster_nodes = ''
+	) {
 
+	include galeracluster::install
 
+    file { '/etc/mysql/conf.d/wsrep.conf':
+	    ensure  => file,
+    	owner   => 'root',
+	    group   => 'root',
+	    mode    => '0644',
+	    content => template("${module_name}/wsrep.conf.erb"),
+	    notify => Service['mysql']
+    }
 
 }
+

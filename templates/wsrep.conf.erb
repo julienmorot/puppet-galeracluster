@@ -1,0 +1,8 @@
+wsrep_cluster_name=<%= @cluster_name %>
+wsrep_cluster_address="gcom://<%= @cluster_nodes.join(", ") %>"
+wsrep_node_name=<%= @fqdn %>
+wsrep_node_address=<%= @ip_address %>
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_sst_method=rsync
+
