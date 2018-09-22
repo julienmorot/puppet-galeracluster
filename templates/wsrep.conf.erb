@@ -1,5 +1,5 @@
-wsrep_cluster_name=<%= @cluster_name %>
-wsrep_cluster_address="gcom://<%= @cluster_nodes.join(", ") %>"
+wsrep_cluster_name=<%= @galeracluster_name %>
+wsrep_cluster_address="gcom://<%= @galeracluster_nodes.join(", ") %>"
 wsrep_node_name=<%= @fqdn %>
 wsrep_node_address=<%= @ip_address %>
 wsrep_on=ON

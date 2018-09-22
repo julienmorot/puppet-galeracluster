@@ -1,0 +1,14 @@
+HOSTS="<%= @galeracluster_nodes.join(' ') %>"
+PORT=<%= @galeracluster_port %>
+
+WARN=1
+
+for HOST in $HOSTS; do
+	echo $HOST
+	#Return 1 if port is open
+	nc -z $HOST $PORT
+	if [ $? == 1 ]; then
+		WARN=1
+	fi
+done
+

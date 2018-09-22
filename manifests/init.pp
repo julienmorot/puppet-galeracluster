@@ -35,7 +35,7 @@
 # Authors
 # -------
 #
-# Author Name <author@domain.com>
+# Julien Morot <jmorot@gmail.com>
 #
 # Copyright
 # ---------
@@ -44,8 +44,9 @@
 #
 class galeracluster (
 	$root_password = 'G@leraP4ssw0rd',
-	$cluster_name   = '',
-    $cluster_nodes = ''
+	$galeracluster_name   = '',
+    $galeracluster_nodes = '',
+	$galeracluster_port  = "4567",
 	) {
 
 	include galeracluster::install
@@ -58,6 +59,17 @@ class galeracluster (
 	    content => template("${module_name}/wsrep.conf.erb"),
 	    notify => Service['mysql']
     }
+
+    file { '/usr/local/bin/wsrep_port_tester.sh':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        content => template("${module_name}/wsrep_port_tester.sh.erb"),
+    }
+
+	$bootstrap_node = $galeracluster_nodes[0]
+	$bootstrap_cmd = "/usr/bin/galera_new_cluster"
 
 }
 
