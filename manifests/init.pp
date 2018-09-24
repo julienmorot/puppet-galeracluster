@@ -46,8 +46,12 @@ class galeracluster (
 	$root_password = 'G@leraP4ssw0rd',
 	$galeracluster_name   = '',
     $galeracluster_nodes = '',
-	$galeracluster_port  = "4567",
+	$galeracluster_port  = "3306",
 	) {
+
+    $bootstrap_node = $galeracluster_nodes[0]
+    $bootstrap_cmd = "/usr/bin/galera_new_cluster"
+	$bootstrap_check_cmd = "/usr/local/bin/wsrep_port_tester.sh"
 
 	include galeracluster::install
 
@@ -68,8 +72,15 @@ class galeracluster (
         content => template("${module_name}/wsrep_port_tester.sh.erb"),
     }
 
-	$bootstrap_node = $galeracluster_nodes[0]
-	$bootstrap_cmd = "/usr/bin/galera_new_cluster"
+	if $fqdn == $bootstrap_node {
+        Exec { 'bootstrap_galeracluster':
+            command => $bootstrap_cmd,
+            unless => $bootstrap_check_cmd,
+        #    require => Class['mysql::server'],
+            before => Service['mysql']
+        }
+	}
+
 
 }
 

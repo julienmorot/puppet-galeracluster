@@ -1,14 +1,23 @@
+#!/bin/bash
+
 HOSTS="<%= @galeracluster_nodes.join(' ') %>"
 PORT=<%= @galeracluster_port %>
 
+# Consider by default that the cluster needs to be bootstraped
 WARN=1
 
 for HOST in $HOSTS; do
-	echo $HOST
-	#Return 1 if port is open
+	#echo $HOST
+	#Return 1 if port is closed
 	nc -z $HOST $PORT
-	if [ $? == 1 ]; then
-		WARN=1
+	# If nc return code is zero, there is at least one node alive 
+	# and listening $PORT.
+	# Thus, you don't have to bootstrap the cluster again
+	if [ $? == 0 ]; then
+		WARN=0
 	fi
 done
+
+exit $WARN
+
 

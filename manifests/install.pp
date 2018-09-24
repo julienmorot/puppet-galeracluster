@@ -2,7 +2,7 @@ class galeracluster::install {
 
     apt::source { "mariadb_deb_repo":
         location => "http://mariadb.mirrors.ovh.net/MariaDB/repo/10.2/ubuntu",
-        key      => "199369E5404BD5FC7D2FE43BCBCB082A1BB943DB",
+#        key      => "199369E5404BD5FC7D2FE43BCBCB082A1BB943DB",
         repos    => "main",
         release  => "${lsbdistcodename}",
     }
