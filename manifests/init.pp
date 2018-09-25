@@ -55,12 +55,12 @@ class galeracluster (
 
 	include galeracluster::install
 
-    file { '/etc/mysql/conf.d/wsrep.conf':
+    file { '/etc/mysql/conf.d/wsrep.cnf':
 	    ensure  => file,
     	owner   => 'root',
 	    group   => 'root',
 	    mode    => '0644',
-	    content => template("${module_name}/wsrep.conf.erb"),
+	    content => template("${module_name}/wsrep.cnf.erb"),
 	    notify => Service['mysql']
     }
 
