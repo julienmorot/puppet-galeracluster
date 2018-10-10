@@ -57,11 +57,11 @@ class galeracluster (
 
     file { '/etc/mysql/conf.d/wsrep.cnf':
 	    ensure  => file,
-    	owner   => 'root',
+		owner   => 'root',
 	    group   => 'root',
 	    mode    => '0644',
 	    content => template("${module_name}/wsrep.cnf.erb"),
-	    notify => Service['mysql']
+		require => Class['Mysql::Server'],
     }
 
     file { '/usr/local/bin/wsrep_port_tester.sh':
@@ -72,14 +72,13 @@ class galeracluster (
         content => template("${module_name}/wsrep_port_tester.sh.erb"),
     }
 
-	if $fqdn == $bootstrap_node {
-        Exec { 'bootstrap_galeracluster':
-            command => $bootstrap_cmd,
-            unless => $bootstrap_check_cmd,
-        #    require => Class['mysql::server'],
-            before => Service['mysql']
-        }
-	}
+#	if $fqdn == $bootstrap_node {
+#       Exec { 'bootstrap_galeracluster':
+#           command => $bootstrap_cmd,
+#            unless => $bootstrap_check_cmd,
+#            require => File['/etc/mysql/conf.d/wsrep.cnf'],
+#        }
+#	}
 
 
 }
