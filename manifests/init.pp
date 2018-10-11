@@ -45,7 +45,7 @@
 class galeracluster (
 	$root_password = 'G@leraP4ssw0rd',
 	$galeracluster_name   = '',
-    $galeracluster_nodes = '',
+	$galeracluster_nodes = '',
 	$galeracluster_port  = "3306",
 	) {
 
@@ -53,7 +53,32 @@ class galeracluster (
     $bootstrap_cmd = "/usr/bin/galera_new_cluster"
 	$bootstrap_check_cmd = "/usr/local/bin/wsrep_port_tester.sh"
 
-	include galeracluster::install
+	package { 'rsync': ensure => 'installed' }
+
+    apt::source { "mariadb_deb_repo":
+        location => "http://mariadb.mirrors.ovh.net/MariaDB/repo/10.2/ubuntu",
+        key      => "177F4010FE56CA3336300305F1656F24C74CD1D8",
+        repos    => "main",
+        release  => "${lsbdistcodename}",
+    }
+
+    $override_options = {
+        'mysqld' => {
+            bind-address=>"0.0.0.0",
+            binlog_format=>"ROW",
+            innodb_autoinc_lock_mode=>2,
+            innodb_flush_log_at_trx_commit=>0,
+			default_storage_engine=>'InnoDB',
+			wsrep_cluster_name => $cluster_name,
+        }
+    }
+
+    class {'::mysql::server':
+        root_password    => $root_password,
+        override_options => $override_options,
+		package_name     => 'mariadb-server',
+		service_name     => 'mysql',
+    }
 
     file { '/etc/mysql/conf.d/wsrep.cnf':
 	    ensure  => file,
@@ -64,6 +89,12 @@ class galeracluster (
 		require => Class['Mysql::Server'],
     }
 
+	file_line { 'safe_to_bootstrap':
+		path    => '/var/lib/mysql/grastate.dat',
+		match   => '^safe_to_bootstrap',
+		line    => 'safe_to_bootstrap: 1',
+	}
+
     file { '/usr/local/bin/wsrep_port_tester.sh':
         ensure  => file,
         owner   => 'root',
@@ -72,13 +103,13 @@ class galeracluster (
         content => template("${module_name}/wsrep_port_tester.sh.erb"),
     }
 
-#	if $fqdn == $bootstrap_node {
-#       Exec { 'bootstrap_galeracluster':
-#           command => $bootstrap_cmd,
-#            unless => $bootstrap_check_cmd,
-#            require => File['/etc/mysql/conf.d/wsrep.cnf'],
-#        }
-#	}
+	if $fqdn == $bootstrap_node {
+       Exec { 'bootstrap_galeracluster':
+           command => $bootstrap_cmd,
+            unless => $bootstrap_check_cmd,
+            require => File['/etc/mysql/conf.d/wsrep.cnf'],
+        }
+	}
 
 
 }

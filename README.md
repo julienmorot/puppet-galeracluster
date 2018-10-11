@@ -9,6 +9,7 @@
 ## Description
 
 This module help you to build a simple MariaDB/Galera cluster.
+I've only tested this module againts Ubuntu 18.04.
 
 ## Setup
 
